@@ -1,0 +1,13 @@
+<package>
+  <description brief="Estimate the angle of a wall in a given field of view.">
+  
+  </description>
+  <author>Sascha Arnold/sascha.arnold@dfki.de</author>
+  <license></license>
+  <url>http://</url>
+  <logo>http://</logo>
+
+  <depend package="base/orogen/types" />
+  <depend package="auv_avalon/sonar_detectors" />
+  <tags>needs_opt</tags>
+</package>

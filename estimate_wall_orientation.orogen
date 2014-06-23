@@ -1,0 +1,60 @@
+name "estimate_wall_orientation"
+# version "0.1"
+
+import_types_from "base"
+using_library "sonar_detectors"
+
+task_context "Task" do
+
+    # Wall estimation settings
+    property("left_opening_angle", '/base/Angle').
+        doc("opening angle to the left of the supposed wall direction, always positive")
+    property("right_opening_angle", '/base/Angle').
+        doc("opening angle to the right of the supposed wall direction, always positive")
+    property("ransac_min_inlier", 'double', 0.5).
+        doc("minimum amount of inliers the ransac line model should have")
+    property("ransac_max_distance", 'double', 0.3).
+        doc("maximum distance of the measurements to the model line to be considered as inlier")
+    property("wall_distance_sigma", 'double', 0.2).
+        doc("maximum allowed sigma of the estimated wall angle")
+    property("wall_angle_sigma", 'double', 0.1).
+        doc("maximum allowed sigma of the estimated distance of the wall")
+    property("wall_candidate_count", 'int', 3).
+        doc("amount of wall candidates to check for stability")
+        
+    # The target frame in the generated poses
+    property 'target_frame', '/std/string', 'world_orientation'
+        
+
+    input_port('sonarbeam_feature', '/base/samples/LaserScan').
+        needs_reliable_connection.
+        doc("newest sonar feature")
+        
+    input_port('pose_samples', '/base/samples/RigidBodyState').
+        needs_reliable_connection.
+        doc("body state in map coordinates")
+        
+        
+    output_port('body2world_orientation', '/base/samples/RigidBodyState').
+        doc("body state in world orientation")
+
+
+    ## transformer config
+    transformer do
+        max_latency( 0.5 )
+
+        transformation("sonar", "odometry")
+        transformation("wall", "world")
+
+        align_port("sonarbeam_feature", 0.1)
+	align_port("pose_samples", 0.01)
+    end
+
+
+    ## states
+    runtime_states :MISSING_TRANSFORMATION, :ESTIMATE_WALL_ORIENTATION, :VALID_WALL_FIX
+
+
+    port_driven
+end
+
