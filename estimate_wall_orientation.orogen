@@ -7,9 +7,11 @@ using_library "sonar_detectors"
 task_context "Task" do
 
     # Wall estimation settings
-    property("left_opening_angle", '/base/Angle').
+    property("initial_wall_direction", '/base/Angle').
+        doc("the initial angle to the wall in the local coordinate frame")
+    property("left_opening_angle",'/base/Angle').
         doc("opening angle to the left of the supposed wall direction, always positive")
-    property("right_opening_angle", '/base/Angle').
+    property("right_opening_angle",'/base/Angle').
         doc("opening angle to the right of the supposed wall direction, always positive")
     property("ransac_min_inlier", 'double', 0.5).
         doc("minimum amount of inliers the ransac line model should have")

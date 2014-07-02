@@ -65,10 +65,13 @@ bool Task::configureHook()
     last_state = PRE_OPERATIONAL;
     new_state = RUNNING;
     wall2odometry = Eigen::Affine3d::Identity();
+    have_valid_wall_angle = false;
     
     angle_estimation.setRansacParameters(_ransac_max_distance.get(), _ransac_min_inlier.get());
     angle_estimation.setStabilityParameters(_wall_candidate_count.get(), _wall_angle_sigma.get(), _wall_distance_sigma.get());
-    angle_estimation.setEstimationZone(_left_opening_angle.get(), _right_opening_angle.get());
+    base::Angle left_limit = _initial_wall_direction.get() + _left_opening_angle.get();
+    base::Angle right_limit = _initial_wall_direction.get() - _right_opening_angle.get();
+    angle_estimation.setEstimationZone(left_limit, right_limit);
     
     return true;
 }
