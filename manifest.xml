@@ -1,5 +1,6 @@
 <package>
-  <description brief="Estimate the angle of a wall in a given field of view.">
+  <description brief="Wall angle based correction of the orientation of the robot.">
+  Initially estimates the angle of a wall in a given field of view. 
   
   </description>
   <author>Sascha Arnold/sascha.arnold@dfki.de</author>

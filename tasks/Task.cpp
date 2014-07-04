@@ -2,7 +2,7 @@
 
 #include "Task.hpp"
 
-using namespace estimate_wall_orientation;
+using namespace wall_orientation_correction;
 
 Task::Task(std::string const& name)
     : TaskBase(name)
@@ -79,6 +79,7 @@ bool Task::startHook()
 {
     if (! TaskBase::startHook())
         return false;
+    
     return true;
 }
 void Task::updateHook()

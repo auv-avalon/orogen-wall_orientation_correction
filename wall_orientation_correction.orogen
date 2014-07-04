@@ -1,4 +1,4 @@
-name "estimate_wall_orientation"
+name "wall_orientation_correction"
 # version "0.1"
 
 import_types_from "base"

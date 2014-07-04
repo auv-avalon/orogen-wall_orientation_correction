@@ -1,13 +1,13 @@
 /* Generated from orogen/lib/orogen/templates/tasks/Task.hpp */
 
-#ifndef ESTIMATE_WALL_ORIENTATION_TASK_TASK_HPP
-#define ESTIMATE_WALL_ORIENTATION_TASK_TASK_HPP
+#ifndef WALL_ORIENTATION_CORRECTION_TASK_TASK_HPP
+#define WALL_ORIENTATION_CORRECTION_TASK_TASK_HPP
 
-#include "estimate_wall_orientation/TaskBase.hpp"
+#include "wall_orientation_correction/TaskBase.hpp"
 
 #include <sonar_detectors/WallAngleEstimation.hpp>
 
-namespace estimate_wall_orientation {
+namespace wall_orientation_correction {
 
     /*! \class Task 
      * \brief The task context provides and requires services. It uses an ExecutionEngine to perform its functions.
@@ -18,7 +18,7 @@ namespace estimate_wall_orientation {
      * The name of a TaskContext is primarily defined via:
      \verbatim
      deployment 'deployment_name'
-         task('custom_task_name','estimate_wall_orientation::Task')
+         task('custom_task_name','wall_orientation_correction::Task')
      end
      \endverbatim
      *  It can be dynamically adapted when the deployment is called with a prefix argument. 
@@ -41,7 +41,7 @@ namespace estimate_wall_orientation {
          * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.
          * \param initial_state The initial TaskState of the TaskContext. Default is Stopped state.
          */
-        Task(std::string const& name = "estimate_wall_orientation::Task");
+        Task(std::string const& name = "wall_orientation_correction::Task");
 
         /** TaskContext constructor for Task 
          * \param name Name of the task. This name needs to be unique to make it identifiable for nameservices. 
