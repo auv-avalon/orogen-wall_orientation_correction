@@ -40,6 +40,21 @@ void Task::sonarbeam_featureTransformerCallback(const base::Time &ts, const ::ba
     Eigen::Affine3d sonar2odometry = body2odometry * sonar2body;
     angle_estimation.updateFeature(sonarbeam_feature_sample, base::Angle::fromRad(base::getYaw(base::Orientation(sonar2odometry.linear()))));
     
+    if(have_valid_wall_angle)
+    {
+	// receive wall to world transformation
+	Eigen::Affine3d wall2world;
+	if (!_wall2world.get(ts, wall2world))
+	{
+	    RTT::log(RTT::Error) << "skip, have no " << _wall2world.getSourceFrame() << " to " << _wall2world.getTargetFrame() << " transformation sample!" << RTT::endlog();
+	    new_state = MISSING_TRANSFORMATION;
+	    return;
+	}
+	
+	Eigen::Affine3d body2wall = wall2odometry.inverse() * body2odometry;
+	Eigen::Affine3d body2world = wall2world * body2wall;
+	_angle_in_world.write(base::Angle::fromRad(base::getYaw(base::Orientation(body2world.linear()))));
+    }
 }
 
 void Task::orientation_samplesTransformerCallback(const base::Time& ts, const base::samples::RigidBodyState& orientation_samples_sample)

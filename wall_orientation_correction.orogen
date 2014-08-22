@@ -39,6 +39,9 @@ task_context "Task" do
         
     output_port('orientation_in_world', '/base/samples/RigidBodyState').
         doc("body state in world orientation")
+        
+    output_port('angle_in_world', '/base/Angle').
+        doc("the angle of the robot in the world frame")
 
 
     ## transformer config
