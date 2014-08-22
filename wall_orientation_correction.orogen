@@ -64,3 +64,26 @@ task_context "Task" do
     port_driven
 end
 
+task_context "OrientationInMap" do
+    
+    input_port('orientation_in_world', '/base/samples/RigidBodyState').
+        needs_reliable_connection.
+        doc("body state in world coordinates")
+        
+    output_port('orientation_in_map', '/base/samples/RigidBodyState').
+        doc("body state in map orientation")
+
+    transformer do
+        max_latency( 0.2 )
+
+        transformation("map", "world")
+
+	align_port("orientation_in_world", 0.01)
+    end
+    
+    runtime_states :MISSING_TRANSFORMATION
+    
+    port_driven
+end
+
+
