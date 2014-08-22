@@ -20,19 +20,29 @@ Task::~Task()
 
 void Task::sonarbeam_featureTransformerCallback(const base::Time &ts, const ::base::samples::LaserScan &sonarbeam_feature_sample)
 {
-    // receive sensor to odometry transformation
-    Eigen::Affine3d sensor2odometry;
-    if (!_sonar2odometry.get(ts, sensor2odometry))
+    // receive sensor to body transformation
+    Eigen::Affine3d sonar2body;
+    if (!_sonar2body.get(ts, sonar2body))
     {
-        RTT::log(RTT::Error) << "skip, have no " << _sonar2odometry.getSourceFrame() << " to " << _sonar2odometry.getTargetFrame() << " transformation sample!" << RTT::endlog();
+        RTT::log(RTT::Error) << "skip, have no " << _sonar2body.getSourceFrame() << " to " << _sonar2body.getTargetFrame() << " transformation sample!" << RTT::endlog();
         new_state = MISSING_TRANSFORMATION;
         return;
     }
-
-    angle_estimation.updateFeature(sonarbeam_feature_sample, base::Angle::fromRad(base::getYaw(base::Orientation(sensor2odometry.linear()))));
+    
+    Eigen::Affine3d body2odometry;
+    if (!_body2odometry.get(ts, body2odometry))
+    {
+        RTT::log(RTT::Error) << "skip, have no " << _body2odometry.getSourceFrame() << " to " << _body2odometry.getTargetFrame() << " transformation sample!" << RTT::endlog();
+        new_state = MISSING_TRANSFORMATION;
+        return;
+    }
+    
+    Eigen::Affine3d sonar2odometry = body2odometry * sonar2body;
+    angle_estimation.updateFeature(sonarbeam_feature_sample, base::Angle::fromRad(base::getYaw(base::Orientation(sonar2odometry.linear()))));
+    
 }
 
-void Task::pose_samplesTransformerCallback(const base::Time& ts, const base::samples::RigidBodyState& pose_samples_sample)
+void Task::orientation_samplesTransformerCallback(const base::Time& ts, const base::samples::RigidBodyState& orientation_samples_sample)
 {
     // receive wall to world transformation
     Eigen::Affine3d wall2world;
@@ -45,11 +55,11 @@ void Task::pose_samplesTransformerCallback(const base::Time& ts, const base::sam
     
     if(have_valid_wall_angle)
     {
-	base::samples::RigidBodyState new_pose_sample = pose_samples_sample;
+	base::samples::RigidBodyState new_pose_sample = orientation_samples_sample;
 	new_pose_sample.targetFrame = _target_frame.get();
 	Eigen::Affine3d pose2wall = wall2odometry.inverse() * new_pose_sample.getTransform();
 	new_pose_sample.setTransform(wall2world * pose2wall);
-	_body2world_orientation.write(new_pose_sample);
+	_orientation_in_world.write(new_pose_sample);
     }
 }
 

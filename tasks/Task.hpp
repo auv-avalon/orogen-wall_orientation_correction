@@ -34,7 +34,7 @@ namespace wall_orientation_correction {
 	Eigen::Affine3d wall2odometry;
 	
         virtual void sonarbeam_featureTransformerCallback(const base::Time &ts, const ::base::samples::LaserScan &sonarbeam_feature_sample);
-	virtual void pose_samplesTransformerCallback(const base::Time &ts, const ::base::samples::RigidBodyState &pose_samples_sample);
+	virtual void orientation_samplesTransformerCallback(const base::Time &ts, const ::base::samples::RigidBodyState &orientation_samples_sample);
 
     public:
         /** TaskContext constructor for Task

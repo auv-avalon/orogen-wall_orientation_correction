@@ -32,12 +32,12 @@ task_context "Task" do
         needs_reliable_connection.
         doc("newest sonar feature")
         
-    input_port('pose_samples', '/base/samples/RigidBodyState').
+    input_port('orientation_samples', '/base/samples/RigidBodyState').
         needs_reliable_connection.
-        doc("body state in map coordinates")
+        doc("orientation samples from the IMU")
         
         
-    output_port('body2world_orientation', '/base/samples/RigidBodyState').
+    output_port('orientation_in_world', '/base/samples/RigidBodyState').
         doc("body state in world orientation")
 
 
@@ -45,11 +45,12 @@ task_context "Task" do
     transformer do
         max_latency( 0.5 )
 
-        transformation("sonar", "odometry")
+	transformation("sonar", "body")
+        transformation("body", "odometry")
         transformation("wall", "world")
 
         align_port("sonarbeam_feature", 0.1)
-	align_port("pose_samples", 0.01)
+	align_port("orientation_samples", 0.01)
     end
 
 
