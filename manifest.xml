@@ -10,5 +10,6 @@
 
   <depend package="base/orogen/types" />
   <depend package="auv_avalon/sonar_detectors" />
+  <depend package="drivers/orogen/transformer"/>
   <tags>needs_opt</tags>
 </package>
