@@ -117,7 +117,7 @@ void Task::updateHook()
     TaskBase::updateHook();
 
     base::Angle wall_angle;
-    if(!have_valid_wall_angle && angle_estimation.getWallAngle(wall_angle))
+    if(!have_valid_wall_angle && angle_estimation.getAngleToWall(wall_angle))
     {
 	//set wall2odometry
 	wall2odometry = Eigen::AngleAxisd(wall_angle.getRad(), Eigen::Vector3d::UnitZ());
