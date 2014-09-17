@@ -2,6 +2,7 @@ name "wall_orientation_correction"
 # version "0.1"
 
 import_types_from "base"
+import_types_from "WallEstimationTaskTypes.hpp"
 using_library "sonar_detectors"
 
 task_context "Task" do
@@ -43,6 +44,10 @@ task_context "Task" do
     output_port('angle_in_world', '/base/Angle').
         doc("the angle of the robot in the world frame")
 
+    ## debug
+    property 'enable_debug', 'bool', false
+
+    output_port('debug_data', 'sonar_detectors/WallEstimationDebugData')
 
     ## transformer config
     transformer do

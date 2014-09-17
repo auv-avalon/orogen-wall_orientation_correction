@@ -124,6 +124,15 @@ void Task::updateHook()
 	have_valid_wall_angle = true;
     }
     
+    if(_enable_debug.value())
+    {
+	sonar_detectors::WallEstimationDebugData debug;
+	debug.time = base::Time::now();
+	debug.features.points = angle_estimation.getFeatures();
+	debug.wall_candidates = angle_estimation.getCandidates();
+	_debug_data.write(debug);
+    }
+    
     // write task state if it has changed
     if(last_state != new_state)
     {
