@@ -38,7 +38,7 @@ void Task::sonarbeam_featureTransformerCallback(const base::Time &ts, const ::ba
     }
     
     Eigen::Affine3d sonar2odometry = body2odometry * sonar2body;
-    angle_estimation.updateFeature(sonarbeam_feature_sample, base::Angle::fromRad(base::getYaw(base::Orientation(sonar2odometry.linear()))));
+    angle_estimation->updateFeature(sonarbeam_feature_sample, base::Angle::fromRad(base::getYaw(base::Orientation(sonar2odometry.linear()))));
     
     if(have_valid_wall_angle)
     {
@@ -92,18 +92,21 @@ bool Task::configureHook()
     wall2odometry = Eigen::Affine3d::Identity();
     have_valid_wall_angle = false;
     
-    angle_estimation.setRansacParameters(_ransac_max_distance.get(), _ransac_min_inlier.get());
-    angle_estimation.setStabilityParameters(_wall_candidate_count.get(), _wall_angle_sigma.get(), _wall_distance_sigma.get());
-    base::Angle left_limit = _initial_wall_direction.get() + _left_opening_angle.get();
-    base::Angle right_limit = _initial_wall_direction.get() - _right_opening_angle.get();
-    angle_estimation.setEstimationZone(left_limit, right_limit);
-    
     return true;
 }
 bool Task::startHook()
 {
     if (! TaskBase::startHook())
         return false;
+
+    have_valid_wall_angle = false;
+
+    angle_estimation.reset(new sonar_detectors::WallAngleEstimation);
+    angle_estimation->setRansacParameters(_ransac_max_distance.get(), _ransac_min_inlier.get());
+    angle_estimation->setStabilityParameters(_wall_candidate_count.get(), _wall_angle_sigma.get(), _wall_distance_sigma.get());
+    base::Angle left_limit = _initial_wall_direction.get() + _left_opening_angle.get();
+    base::Angle right_limit = _initial_wall_direction.get() - _right_opening_angle.get();
+    angle_estimation->setEstimationZone(left_limit, right_limit);
     
     return true;
 }
@@ -117,7 +120,7 @@ void Task::updateHook()
     TaskBase::updateHook();
 
     base::Angle wall_angle;
-    if(!have_valid_wall_angle && angle_estimation.getAngleToWall(wall_angle))
+    if(!have_valid_wall_angle && angle_estimation->getAngleToWall(wall_angle))
     {
 	//set wall2odometry
 	wall2odometry = Eigen::AngleAxisd(wall_angle.getRad(), Eigen::Vector3d::UnitZ());
@@ -128,8 +131,8 @@ void Task::updateHook()
     {
 	sonar_detectors::WallEstimationDebugData debug;
 	debug.time = base::Time::now();
-	debug.features.points = angle_estimation.getFeatures();
-	debug.wall_candidates = angle_estimation.getCandidates();
+	debug.features.points = angle_estimation->getFeatures();
+	debug.wall_candidates = angle_estimation->getCandidates();
 	_debug_data.write(debug);
     }
     

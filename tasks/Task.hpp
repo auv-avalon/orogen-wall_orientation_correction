@@ -6,6 +6,7 @@
 #include "wall_orientation_correction/TaskBase.hpp"
 
 #include <sonar_detectors/WallAngleEstimation.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace wall_orientation_correction {
 
@@ -29,7 +30,7 @@ namespace wall_orientation_correction {
     protected:
 	States last_state;
 	States new_state;
-	sonar_detectors::WallAngleEstimation angle_estimation;
+	boost::shared_ptr<sonar_detectors::WallAngleEstimation> angle_estimation;
 	bool have_valid_wall_angle;
 	Eigen::Affine3d wall2odometry;
 	
